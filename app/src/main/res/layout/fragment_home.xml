@@ -4,6 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="bestProduct"
+            type="String" />
+
+        <variable
+            name="recentProduct"
+            type="String" />
+
+        <variable
+            name="viewProduct"
+            type="String" />
 
     </data>
 
@@ -39,12 +50,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:padding="8dp"
-                    android:text="جدید ترین محصولات"
+                    android:text="@{recentProduct}"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view_hom"
+                    android:id="@+id/recycler_view_recent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/text_new"/>
@@ -53,9 +64,9 @@
                     android:id="@+id/text_better"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:layout_below="@+id/recycler_view_hom"
+                    android:layout_below="@+id/recycler_view_recent"
                     android:padding="8dp"
-                    android:text="بهتر ترین محصولات"
+                    android:text="@{bestProduct}"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
 
@@ -71,7 +82,7 @@
                     android:layout_height="40dp"
                     android:layout_below="@id/recycler_view_better"
                     android:padding="8dp"
-                    android:text="پربازدید ترین محصولات"
+                    android:text="@{viewProduct}"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
 

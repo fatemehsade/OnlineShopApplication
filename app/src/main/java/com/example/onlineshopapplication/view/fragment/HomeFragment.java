@@ -8,8 +8,10 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,7 +33,6 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding mBinding;
     private Home mHomeViewModel;
-
 
 
     public HomeFragment() {
@@ -61,8 +62,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mBinding= DataBindingUtil.inflate(
-                inflater,R.layout.fragment_home,
+        mBinding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_home,
                 container,
                 false);
         return mBinding.getRoot();
@@ -71,7 +72,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.search_menu,menu);
+        inflater.inflate(R.menu.search_menu, menu);
     }
 
     private void initToolbar() {
@@ -134,9 +135,16 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(Boolean isItemClicked) {
                 if (isItemClicked) {
-                    Toast.makeText(getContext(), "Done Successful", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getContext(), "Done Failed", Toast.LENGTH_LONG).show();
+                    mHomeViewModel.getProductIdLiveData().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+                        @Override
+                        public void onChanged(Integer id) {
+                            //int id = mHomeViewModel.getProductIdLiveData().getValue();
+                            HomeFragmentDirections.ActionNavigationHomeToDetailFragment action =
+                                    HomeFragmentDirections.actionNavigationHomeToDetailFragment();
+                            action.setId(id);
+                            NavHostFragment.findNavController(HomeFragment.this).navigate(action);
+                        }
+                    });
                 }
             }
         });
@@ -144,17 +152,17 @@ public class HomeFragment extends Fragment {
 
 
     private void setupBestProductAdapter(List<Product> bestProducts) {
-        ProductAdapter bestProductAdapter = new ProductAdapter(getContext(),1, bestProducts);
+        ProductAdapter bestProductAdapter = new ProductAdapter(getContext(), 1, bestProducts);
         mBinding.recyclerViewBetter.setAdapter(bestProductAdapter);
     }
 
     private void setupLatestProductAdapter(List<Product> latestProducts) {
-        ProductAdapter latestProductAdapter = new ProductAdapter(getContext(),1, latestProducts);
+        ProductAdapter latestProductAdapter = new ProductAdapter(getContext(), 1, latestProducts);
         mBinding.recyclerViewRecent.setAdapter(latestProductAdapter);
     }
 
     private void setupMostVisitedProductAdapter(List<Product> mostVisitedProducts) {
-        ProductAdapter mostVisitedProductAdapter = new ProductAdapter(getContext(),1, mostVisitedProducts);
+        ProductAdapter mostVisitedProductAdapter = new ProductAdapter(getContext(), 1, mostVisitedProducts);
         mBinding.recyclerViewView.setAdapter(mostVisitedProductAdapter);
     }
 
@@ -162,5 +170,4 @@ public class HomeFragment extends Fragment {
         List<String> urls = mHomeViewModel.getUrl(specialProducts);
         mBinding.sliderViewSpecialProduct.setSliderAdapter(new SliderAdapter(getContext(), urls));
     }
-
 }

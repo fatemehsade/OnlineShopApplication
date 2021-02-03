@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.onlineshopapplication.model.Product;
 import com.example.onlineshopapplication.repository.ProductRepository;
@@ -19,6 +20,8 @@ public class Home extends AndroidViewModel {
             mLatestProductLiveData, mMostVisitedProductLiveData,mSpecialProductLiveData;
     private LiveData<Integer> mTotalProductLiveData;
     private SingleLiveEvent<Boolean> mItemClickedSingleLiveEvent = new SingleLiveEvent<>();
+    private MutableLiveData<Integer> mProductIdLiveData = new MutableLiveData<>();
+
 
 
     public Home(@NonNull Application application) {
@@ -48,6 +51,10 @@ public class Home extends AndroidViewModel {
 
     public LiveData<List<Product>> getSpecialProductLiveData() {
         return mSpecialProductLiveData;
+    }
+
+    public MutableLiveData<Integer> getProductIdLiveData() {
+        return mProductIdLiveData;
     }
 
 

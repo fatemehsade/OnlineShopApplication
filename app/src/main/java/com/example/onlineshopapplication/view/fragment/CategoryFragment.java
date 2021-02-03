@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -18,14 +19,14 @@ import android.view.ViewGroup;
 import com.example.onlineshopapplication.R;
 import com.example.onlineshopapplication.databinding.FragmentCategoryBinding;
 import com.example.onlineshopapplication.model.Category;
-import com.example.onlineshopapplication.paging.CategoryAdapter;
-import com.example.onlineshopapplication.paging.CategoryViewModel;
+import com.example.onlineshopapplication.paging.CategoryListAdapter;
+import com.example.onlineshopapplication.paging.SingleCategoryViewModel;
 
 
 public class CategoryFragment extends Fragment {
 
     private FragmentCategoryBinding mBinding;
-    private CategoryViewModel mViewModel;
+    private SingleCategoryViewModel mViewModel;
 
     public static CategoryFragment newInstance() {
         Bundle args = new Bundle();
@@ -38,7 +39,7 @@ public class CategoryFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(SingleCategoryViewModel.class);
     }
 
     @Nullable
@@ -53,13 +54,31 @@ public class CategoryFragment extends Fragment {
                 false);
 
         initRecyclerView();
-        CategoryAdapter categoryAdapter = new CategoryAdapter(getContext());
+        CategoryListAdapter categoryAdapter = new CategoryListAdapter(getContext(), mViewModel);
         mViewModel.getPagedListLiveData().observe(getViewLifecycleOwner(), new Observer<PagedList<Category>>() {
             @Override
             public void onChanged(PagedList<Category> categories) {
                 categoryAdapter.submitList(categories);
             }
         });
+
+        mViewModel.getItemClickedSingleLiveEvent().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isClicked) {
+                if (isClicked) {
+                    mViewModel.getCategoryIdLiveData().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+                        @Override
+                        public void onChanged(Integer id) {
+                            CategoryFragmentDirections.ActionNavigationCategoryToProductOfEachCategoryFragment action =
+                                    CategoryFragmentDirections.actionNavigationCategoryToProductOfEachCategoryFragment();
+                            action.setId(id);
+                            NavHostFragment.findNavController(CategoryFragment.this).navigate(action);
+                        }
+                    });
+                }
+            }
+        });
+
 
         mBinding.recyclerViewCategory.setAdapter(categoryAdapter);
 
@@ -70,3 +89,5 @@ public class CategoryFragment extends Fragment {
         mBinding.recyclerViewCategory.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 }
+
+

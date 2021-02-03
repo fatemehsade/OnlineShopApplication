@@ -2,6 +2,7 @@ package com.example.onlineshopapplication.paging;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -15,8 +16,10 @@ import com.example.onlineshopapplication.R;
 import com.example.onlineshopapplication.databinding.CategoryAdapterItemBinding;
 import com.example.onlineshopapplication.model.Category;
 
-public class CategoryAdapter extends PagedListAdapter<Category, CategoryAdapter.CategoryHolder> {
+public class CategoryListAdapter extends PagedListAdapter<Category, CategoryListAdapter.CategoryHolder> {
     private Context mContext;
+    private SingleCategoryViewModel mViewModel;
+
     private static DiffUtil.ItemCallback<Category> sCategoryItemCallback =
             new DiffUtil.ItemCallback<Category>() {
                 @Override
@@ -35,9 +38,11 @@ public class CategoryAdapter extends PagedListAdapter<Category, CategoryAdapter.
                 }
             };
 
-    public CategoryAdapter(Context context) {
+    public CategoryListAdapter(Context context,SingleCategoryViewModel viewModel) {
         super(sCategoryItemCallback);
         mContext = context;
+        mViewModel = viewModel;
+
     }
 
     @NonNull
@@ -54,6 +59,13 @@ public class CategoryAdapter extends PagedListAdapter<Category, CategoryAdapter.
     public void onBindViewHolder(@NonNull CategoryHolder holder, int position) {
         Category category = getItem(position);
         holder.bindCategory(category);
+        holder.mBinding.btnSeeAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewModel.getItemClickedSingleLiveEvent().setValue(true);
+                mViewModel.getCategoryIdLiveData().setValue(category.getId());
+            }
+        });
     }
 
     public class CategoryHolder extends RecyclerView.ViewHolder {

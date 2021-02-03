@@ -53,7 +53,25 @@
                     imageUrl="@{product.imageUrl.size() != 0 ? product.imageUrl.get(0) : null}"
                     android:layout_width="wrap_content"
                     android:layout_height="150dp"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="16dp" />
+                <com.google.android.material.appbar.AppBarLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#813434">
+
+                    <Button
+                        android:id="@+id/btn_add_to_cart"
+                        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="افزودن به سبد خرید"
+                        android:textColor="#0B0A0A"
+                        android:textSize="20sp"
+                        app:icon="@drawable/ic_add" />
+
+                </com.google.android.material.appbar.AppBarLayout>
 
             </com.smarteist.autoimageslider.SliderView>
 

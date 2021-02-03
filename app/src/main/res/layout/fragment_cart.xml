@@ -4,13 +4,51 @@
 
     <data>
 
+        <variable
+            name="totalPrice"
+            type="String" />
+
     </data>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.fragment.CartFragment">
+        android:background="#604F4F"
+        android:orientation="vertical">
 
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#AA1D1D">
 
-    </FrameLayout>
+            <Button
+                android:id="@+id/btn_continue_buying"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:text="ادامه فرایند خرید"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/txt_total_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@{totalPrice != null ? @string/total + `: ` + totalPrice + ` ` + @string/currency : @string/total + `: ` + @string/ziro + ' ' + @string/currency}"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_cart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
 </layout>

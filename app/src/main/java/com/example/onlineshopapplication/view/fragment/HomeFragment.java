@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.onlineshopapplication.R;
 import com.example.onlineshopapplication.ViewModel.Home;
@@ -126,6 +127,17 @@ public class HomeFragment extends Fragment {
             public void onChanged(List<Product> specialProducts) {
                 mBinding.setSpecialProductTitle("محصولات ویژه");
                 setupSpecialProductAdapter(specialProducts);
+            }
+        });
+
+        mHomeViewModel.getItemClickedSingleLiveEvent().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isItemClicked) {
+                if (isItemClicked) {
+                    Toast.makeText(getContext(), "Done Successful", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), "Done Failed", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

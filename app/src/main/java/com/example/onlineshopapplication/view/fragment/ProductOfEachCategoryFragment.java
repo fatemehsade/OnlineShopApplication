@@ -8,25 +8,33 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.onlineshopapplication.R;
-import com.example.onlineshopapplication.ViewModel.ProductOfEachCategoryViewModel;
+import com.example.onlineshopapplication.ViewModel.SingleProductOfEachCategoryViewModel;
 import com.example.onlineshopapplication.adapter.ProductAdapter;
 import com.example.onlineshopapplication.databinding.FragmentProductOfEachCategoryBinding;
 import com.example.onlineshopapplication.model.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class ProductOfEachCategoryFragment extends Fragment {
 
     private FragmentProductOfEachCategoryBinding mBinding;
-    private ProductOfEachCategoryViewModel mViewModel;
+    private SingleProductOfEachCategoryViewModel mViewModel;
+    private int mCurrentPage = 1;
+    private int mId;
+    private ProductAdapter mProductAdapter;
+    private List<Product> mProducts = new ArrayList<>();
+
 
 
     public static ProductOfEachCategoryFragment newInstance() {
@@ -40,7 +48,7 @@ public class ProductOfEachCategoryFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mViewModel = new ViewModelProvider(this).get(ProductOfEachCategoryViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(SingleProductOfEachCategoryViewModel.class);
         setObserver();
     }
 
@@ -56,6 +64,17 @@ public class ProductOfEachCategoryFragment extends Fragment {
                 false);
 
         initRecyclerView();
+        mBinding.recyclerViewProductOfEachCategory.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (!mBinding.recyclerViewProductOfEachCategory.canScrollVertically(1)) {
+                    if (mCurrentPage <= mViewModel.getTotalPageLiveData().getValue()) {
+                        mViewModel.getProductByCategory(mId, mCurrentPage);
+                        mCurrentPage++;
+                    }
+                }
+            }
+        });
 
         return mBinding.getRoot();
     }
@@ -64,15 +83,37 @@ public class ProductOfEachCategoryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ProductOfEachCategoryFragmentArgs args = ProductOfEachCategoryFragmentArgs.fromBundle(getArguments());
-        int id = args.getId();
-        mViewModel.getProductByCategory(id);
+        mId = args.getId();
+        setupAdapter(mProducts);
+        mViewModel.getProductByCategory(mId, mCurrentPage);
+        mCurrentPage++;
     }
 
     private void setObserver() {
         mViewModel.getProductByCategoryLiveData().observe(this, new Observer<List<Product>>() {
             @Override
             public void onChanged(List<Product> products) {
-                setupAdapter(products);
+
+                int positionStart = mProducts.size();
+                mProducts.addAll(products);
+                int itemCount = mProducts.size();
+                mProductAdapter.notifyItemRangeInserted(positionStart, itemCount);
+            }
+        });
+        mViewModel.getItemClickedSingleLiveEvent().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isItemClicked) {
+                if (isItemClicked) {
+                    mViewModel.getProductIdMutableLiveData().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+                        @Override
+                        public void onChanged(Integer id) {
+                            ProductOfEachCategoryFragmentDirections.ActionProductOfEachCategoryFragmentToDetailFragment action =
+                                    ProductOfEachCategoryFragmentDirections.actionProductOfEachCategoryFragmentToDetailFragment();
+                            action.setId(id);
+                            NavHostFragment.findNavController(ProductOfEachCategoryFragment.this).navigate(action);
+                        }
+                    });
+                }
             }
         });
     }
@@ -82,7 +123,9 @@ public class ProductOfEachCategoryFragment extends Fragment {
     }
 
     private void setupAdapter(List<Product> products) {
-        ProductAdapter productAdapter = new ProductAdapter(getContext(), 3, products);
-        mBinding.recyclerViewProductOfEachCategory.setAdapter(productAdapter);
+        mProductAdapter = new ProductAdapter(getContext(), mViewModel, 3, products);
+        mBinding.recyclerViewProductOfEachCategory.setAdapter(mProductAdapter);
     }
+
+
 }

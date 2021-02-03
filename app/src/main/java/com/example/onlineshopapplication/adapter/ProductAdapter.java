@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.onlineshopapplication.R;
 
 import com.example.onlineshopapplication.ViewModel.Home;
+import com.example.onlineshopapplication.ViewModel.SingleProductOfEachCategoryViewModel;
 import com.example.onlineshopapplication.databinding.CartProductAdapterItemBinding;
 import com.example.onlineshopapplication.databinding.HomeProductAdapterItemBinding;
 import com.example.onlineshopapplication.databinding.ProductOfEachCategoryAdapterItemBinding;
@@ -23,12 +24,16 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Context mContext;
     private int mViewType;
     private List<Product> mProducts;
+    private SingleProductOfEachCategoryViewModel mProductOfEachCategoryViewModel;
+
     private Home mViewModel;
 
-    public ProductAdapter(Context context, int viewType, List<Product> products) {
+    public ProductAdapter(Context context, SingleProductOfEachCategoryViewModel singleProductOfEachCategoryViewModel, int viewType, List<Product> products) {
         mContext = context;
         mViewType = viewType;
         mProducts = products;
+        mProductOfEachCategoryViewModel = singleProductOfEachCategoryViewModel;
+
     }
 
     public List<Product> getProducts() {
@@ -67,8 +72,9 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        Product product = mProducts.get(position);
         if (holder instanceof HomeProductHolder) {
-            Product product = mProducts.get(position);
+
             ((HomeProductHolder) holder).bindProduct(product);
             ((HomeProductHolder) holder).mBinding.getRoot().setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -80,6 +86,17 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
         if (holder instanceof CartProductHolder) {
             ((CartProductHolder) holder).bindProduct(mProducts.get(position));
+        }
+
+        if (holder instanceof ProductOfEachCategoryHolder) {
+            ((ProductOfEachCategoryHolder) holder).bindProduct(product);
+            ((ProductOfEachCategoryHolder) holder).mBinding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mProductOfEachCategoryViewModel.getItemClickedSingleLiveEvent().setValue(true);
+                    mProductOfEachCategoryViewModel.getProductIdMutableLiveData().setValue(product.getId());
+                }
+            });
         }
     }
 

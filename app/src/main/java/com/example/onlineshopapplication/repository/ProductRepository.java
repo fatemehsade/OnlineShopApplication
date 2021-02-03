@@ -5,8 +5,10 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.onlineshopapplication.model.Category;
 import com.example.onlineshopapplication.model.Product;
 import com.example.onlineshopapplication.remote.ApiInterFaceService;
+import com.example.onlineshopapplication.remote.CategoryListDeserializer;
 import com.example.onlineshopapplication.remote.InstansRetrofit;
 import com.example.onlineshopapplication.remote.ParseListProduct;
 import com.google.gson.reflect.TypeToken;
@@ -20,7 +22,7 @@ import retrofit2.Response;
 public class ProductRepository {
     private Context mContext;
     private static ProductRepository sInstance;
-    private ApiInterFaceService mService;
+    private ApiInterFaceService mService,mCategoryService;
 
 
     private MutableLiveData<List<Product>> mBestProductMutableLiveData = new MutableLiveData<>();
@@ -35,6 +37,11 @@ public class ProductRepository {
                 new TypeToken<List<Product>>() {
                 }.getType(),
                 new ParseListProduct()).create(ApiInterFaceService.class);
+        mCategoryService = InstansRetrofit.getRetrofitInstance(
+                new TypeToken<List<Category>>() {
+                }.getType(),
+                new CategoryListDeserializer()).create(ApiInterFaceService.class);
+
         mContext = context;
     }
 

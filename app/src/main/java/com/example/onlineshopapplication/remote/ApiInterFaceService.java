@@ -1,5 +1,6 @@
 package com.example.onlineshopapplication.remote;
 
+import com.example.onlineshopapplication.model.Category;
 import com.example.onlineshopapplication.model.Product;
 
 import java.util.List;
@@ -36,6 +37,10 @@ public interface ApiInterFaceService {
     @GET("products?consumer key=ck_15465e254b749cb895e00d64387c8b7f96aba938 & " +
             "consumer secret=cs_80931093385005fa89e3eedbdb96bc6d5f70e7ec")
     Call<List<Product>> getSpecialProduct(@Query("featured") boolean featured, @Query("per_page") int per_page);
+
+    @GET("products?consumer key=ck_15465e254b749cb895e00d64387c8b7f96aba938 & " +
+            "consumer secret=cs_80931093385005fa89e3eedbdb96bc6d5f70e7ec")
+    Call<List<Category>> getCategory(@Query("page") int page);
 
 
 

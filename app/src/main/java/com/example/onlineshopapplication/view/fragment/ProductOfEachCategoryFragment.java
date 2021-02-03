@@ -1,6 +1,9 @@
 package com.example.onlineshopapplication.view.fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,29 +15,22 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.example.onlineshopapplication.R;
-import com.example.onlineshopapplication.ViewModel.SingleProductOfEachCategoryViewModel;
 import com.example.onlineshopapplication.adapter.ProductAdapter;
 import com.example.onlineshopapplication.databinding.FragmentProductOfEachCategoryBinding;
 import com.example.onlineshopapplication.model.Product;
+import com.example.onlineshopapplication.ViewModel.SingleProductOfEachCategoryViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ProductOfEachCategoryFragment extends Fragment {
-
     private FragmentProductOfEachCategoryBinding mBinding;
     private SingleProductOfEachCategoryViewModel mViewModel;
     private int mCurrentPage = 1;
     private int mId;
     private ProductAdapter mProductAdapter;
     private List<Product> mProducts = new ArrayList<>();
-
 
 
     public static ProductOfEachCategoryFragment newInstance() {
@@ -64,6 +60,7 @@ public class ProductOfEachCategoryFragment extends Fragment {
                 false);
 
         initRecyclerView();
+
         mBinding.recyclerViewProductOfEachCategory.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -93,13 +90,13 @@ public class ProductOfEachCategoryFragment extends Fragment {
         mViewModel.getProductByCategoryLiveData().observe(this, new Observer<List<Product>>() {
             @Override
             public void onChanged(List<Product> products) {
-
                 int positionStart = mProducts.size();
                 mProducts.addAll(products);
                 int itemCount = mProducts.size();
                 mProductAdapter.notifyItemRangeInserted(positionStart, itemCount);
             }
         });
+
         mViewModel.getItemClickedSingleLiveEvent().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isItemClicked) {
@@ -126,6 +123,4 @@ public class ProductOfEachCategoryFragment extends Fragment {
         mProductAdapter = new ProductAdapter(getContext(), mViewModel, 3, products);
         mBinding.recyclerViewProductOfEachCategory.setAdapter(mProductAdapter);
     }
-
-
 }

@@ -1,6 +1,9 @@
 package com.example.onlineshopapplication.view.fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,33 +12,20 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.example.onlineshopapplication.R;
-import com.example.onlineshopapplication.ViewModel.DetailViewModel;
 import com.example.onlineshopapplication.adapter.SliderAdapter;
 import com.example.onlineshopapplication.databinding.FragmentDetailBinding;
 import com.example.onlineshopapplication.model.Product;
-
+import com.example.onlineshopapplication.ViewModel.SingleSharedDetailViewModel;
 
 public class DetailFragment extends Fragment {
     private FragmentDetailBinding mBinding;
-    private DetailViewModel mViewModel;
-
-
-
-
-    public DetailFragment() {
-        // Required empty public constructor
-    }
-
+    private SingleSharedDetailViewModel mViewModel;
+    private Product mProduct;
 
     public static DetailFragment newInstance() {
         DetailFragment fragment = new DetailFragment();
         Bundle args = new Bundle();
-
         fragment.setArguments(args);
         return fragment;
     }
@@ -43,20 +33,33 @@ public class DetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(DetailViewModel.class);
-        setObserver();
 
+        mViewModel = new ViewModelProvider(requireActivity()).get(SingleSharedDetailViewModel.class);
+        setObserver();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         mBinding = DataBindingUtil.inflate(
                 inflater,
                 R.layout.fragment_detail,
                 container,
                 false);
+
+        mBinding.btnAddToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewModel.addToCartClicked(view);
+                mBinding.setIsSold(true);
+                mViewModel.getProducts().add(mProduct);
+                mViewModel.getProductListMutableLiveData().setValue(mViewModel.getProducts());
+                mViewModel.getPrices().add(mProduct.getPrice());
+                mViewModel.getPriceMutableLiveData().setValue(mViewModel.getPrices());
+            }
+        });
+
         return mBinding.getRoot();
     }
 
@@ -69,9 +72,10 @@ public class DetailFragment extends Fragment {
     }
 
     private void setObserver() {
-        mViewModel.getProductLiveData().observe(this, new Observer<Product>() {
+        mViewModel.getRetrieveProductLiveData().observe(this, new Observer<Product>() {
             @Override
             public void onChanged(Product product) {
+                mProduct = product;
                 initViews(product);
             }
         });

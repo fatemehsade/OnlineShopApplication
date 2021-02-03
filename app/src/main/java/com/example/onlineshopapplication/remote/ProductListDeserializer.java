@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParseListProduct implements JsonDeserializer<List<Product>> {
+public class ProductListDeserializer implements JsonDeserializer<List<Product>> {
     @Override
     public List<Product> deserialize(
             JsonElement json, Type typeOfT, JsonDeserializationContext context)

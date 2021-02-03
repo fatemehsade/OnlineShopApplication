@@ -14,7 +14,7 @@ import com.example.onlineshopapplication.singleliveevent.SingleLiveEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Home extends AndroidViewModel {
+public class SingleHomeViewModel extends AndroidViewModel {
     private ProductRepository mRepository;
     private LiveData<List<Product>> mBestProductLiveData,
             mLatestProductLiveData, mMostVisitedProductLiveData,mSpecialProductLiveData;
@@ -24,7 +24,7 @@ public class Home extends AndroidViewModel {
 
 
 
-    public Home(@NonNull Application application) {
+    public SingleHomeViewModel(@NonNull Application application) {
         super(application);
 
         mRepository = ProductRepository.getInstance(getApplication());

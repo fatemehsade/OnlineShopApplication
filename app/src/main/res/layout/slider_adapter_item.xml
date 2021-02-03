@@ -28,7 +28,7 @@
             app:sliderIndicatorPadding="3dp"
             app:sliderIndicatorRadius="2dp"
             app:sliderIndicatorSelectedColor="@color/white"
-            app:sliderIndicatorUnselectedColor="#403C3C"
+            app:sliderIndicatorUnselectedColor="@color/light_gray"
             app:sliderScrollTimeInSec="2"
             app:sliderStartAutoCycle="true">
 

@@ -48,7 +48,7 @@ public class SliderAdapter extends SliderViewAdapter<SliderAdapter.SliderHolder>
         return mUrls.size();
     }
 
-    public static class SliderHolder extends SliderViewAdapter.ViewHolder {
+    public class SliderHolder extends SliderViewAdapter.ViewHolder {
         private SliderAdapterItemBinding mBinding;
 
         public SliderHolder(SliderAdapterItemBinding binding) {

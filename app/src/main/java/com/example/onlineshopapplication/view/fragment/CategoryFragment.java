@@ -1,6 +1,9 @@
 package com.example.onlineshopapplication.view.fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,19 +15,13 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.example.onlineshopapplication.R;
 import com.example.onlineshopapplication.databinding.FragmentCategoryBinding;
 import com.example.onlineshopapplication.model.Category;
 import com.example.onlineshopapplication.paging.CategoryListAdapter;
 import com.example.onlineshopapplication.paging.SingleCategoryViewModel;
 
-
 public class CategoryFragment extends Fragment {
-
     private FragmentCategoryBinding mBinding;
     private SingleCategoryViewModel mViewModel;
 
@@ -54,11 +51,11 @@ public class CategoryFragment extends Fragment {
                 false);
 
         initRecyclerView();
-        CategoryListAdapter categoryAdapter = new CategoryListAdapter(getContext(), mViewModel);
+        CategoryListAdapter categoryListAdapter = new CategoryListAdapter(getContext(), mViewModel);
         mViewModel.getPagedListLiveData().observe(getViewLifecycleOwner(), new Observer<PagedList<Category>>() {
             @Override
             public void onChanged(PagedList<Category> categories) {
-                categoryAdapter.submitList(categories);
+                categoryListAdapter.submitList(categories);
             }
         });
 
@@ -79,8 +76,7 @@ public class CategoryFragment extends Fragment {
             }
         });
 
-
-        mBinding.recyclerViewCategory.setAdapter(categoryAdapter);
+        mBinding.recyclerViewCategory.setAdapter(categoryListAdapter);
 
         return mBinding.getRoot();
     }
@@ -89,5 +85,3 @@ public class CategoryFragment extends Fragment {
         mBinding.recyclerViewCategory.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 }
-
-

@@ -10,30 +10,43 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onlineshopapplication.R;
-
-import com.example.onlineshopapplication.ViewModel.Home;
-import com.example.onlineshopapplication.ViewModel.SingleProductOfEachCategoryViewModel;
 import com.example.onlineshopapplication.databinding.CartProductAdapterItemBinding;
 import com.example.onlineshopapplication.databinding.HomeProductAdapterItemBinding;
 import com.example.onlineshopapplication.databinding.ProductOfEachCategoryAdapterItemBinding;
 import com.example.onlineshopapplication.model.Product;
+import com.example.onlineshopapplication.ViewModel.SingleHomeViewModel;
+import com.example.onlineshopapplication.ViewModel.SingleProductOfEachCategoryViewModel;
+import com.example.onlineshopapplication.ViewModel.SingleSharedDetailViewModel;
 
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
+    private SingleHomeViewModel mSingleHomeViewModel;
+    private SingleProductOfEachCategoryViewModel mProductOfEachCategoryViewModel;
+    private SingleSharedDetailViewModel mSingleSharedDetailViewModel;
     private int mViewType;
     private List<Product> mProducts;
-    private SingleProductOfEachCategoryViewModel mProductOfEachCategoryViewModel;
 
-    private Home mViewModel;
+    public ProductAdapter(Context context, SingleHomeViewModel singleHomeViewModel, int viewType, List<Product> products) {
+        mContext = context;
+        mSingleHomeViewModel = singleHomeViewModel;
+        mViewType = viewType;
+        mProducts = products;
+    }
 
     public ProductAdapter(Context context, SingleProductOfEachCategoryViewModel singleProductOfEachCategoryViewModel, int viewType, List<Product> products) {
         mContext = context;
+        mProductOfEachCategoryViewModel = singleProductOfEachCategoryViewModel;
         mViewType = viewType;
         mProducts = products;
-        mProductOfEachCategoryViewModel = singleProductOfEachCategoryViewModel;
+    }
 
+    public ProductAdapter(Context context, SingleSharedDetailViewModel singleSharedDetailViewModel, int viewType, List<Product> products) {
+        mContext = context;
+        mSingleSharedDetailViewModel = singleSharedDetailViewModel;
+        mViewType = viewType;
+        mProducts = products;
     }
 
     public List<Product> getProducts() {
@@ -47,15 +60,14 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         if (viewType == 3) {
             return new ProductOfEachCategoryHolder(DataBindingUtil.inflate(
                     LayoutInflater.from(mContext),
                     R.layout.product_of_each_category_adapter_item,
                     parent,
                     false));
-        }else
-        if (viewType == 2) {
+
+        } else if (viewType == 2) {
             return new CartProductHolder(DataBindingUtil.inflate(
                     LayoutInflater.from(mContext),
                     R.layout.cart_product_adapter_item,
@@ -74,18 +86,60 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Product product = mProducts.get(position);
         if (holder instanceof HomeProductHolder) {
-
             ((HomeProductHolder) holder).bindProduct(product);
             ((HomeProductHolder) holder).mBinding.getRoot().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mViewModel.getItemClickedSingleLiveEvent().setValue(true);
-                    mViewModel.getProductIdLiveData().setValue(product.getId());
+                    mSingleHomeViewModel.getItemClickedSingleLiveEvent().setValue(true);
+                    mSingleHomeViewModel.getProductIdLiveData().setValue(product.getId());
                 }
             });
         }
+
         if (holder instanceof CartProductHolder) {
-            ((CartProductHolder) holder).bindProduct(mProducts.get(position));
+            ((CartProductHolder) holder).bindProduct(product);
+            ((CartProductHolder) holder).mBinding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mSingleSharedDetailViewModel.getProductMutableLiveData().setValue(product);
+                    mSingleSharedDetailViewModel.getItemClickedMutableLiveData().setValue(true);
+                }
+            });
+            ((CartProductHolder) holder).mBinding.btnAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mSingleSharedDetailViewModel.getProductMutableLiveData().setValue(product);
+                    mSingleSharedDetailViewModel.getAddClickedSingleLiveEvent().setValue(true);
+                    int numberOfProduct = Integer.valueOf(((CartProductHolder) holder).mBinding.btnNumberOfProduct.getText().toString());
+                    if (numberOfProduct == 1) {
+                        ((CartProductHolder) holder).mBinding.btnDelete.setVisibility(View.GONE);
+                        ((CartProductHolder) holder).mBinding.btnRemove.setVisibility(View.VISIBLE);
+                    }
+                    ((CartProductHolder) holder).mBinding.btnNumberOfProduct.setText(++numberOfProduct + "");
+                }
+            });
+
+            ((CartProductHolder) holder).mBinding.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mSingleSharedDetailViewModel.getProductMutableLiveData().setValue(product);
+                    mSingleSharedDetailViewModel.getDeleteClickedSingleLiveEvent().setValue(true);
+                }
+            });
+
+            ((CartProductHolder) holder).mBinding.btnRemove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mSingleSharedDetailViewModel.getProductMutableLiveData().setValue(product);
+                    mSingleSharedDetailViewModel.getRemoveClickedSingleLiveEvent().setValue(true);
+                    int numberOfProduct = Integer.valueOf(((CartProductHolder) holder).mBinding.btnNumberOfProduct.getText().toString());
+                    if (numberOfProduct == 2) {
+                        ((CartProductHolder) holder).mBinding.btnRemove.setVisibility(View.GONE);
+                        ((CartProductHolder) holder).mBinding.btnDelete.setVisibility(View.VISIBLE);
+                    }
+                    ((CartProductHolder) holder).mBinding.btnNumberOfProduct.setText(--numberOfProduct + "");
+                }
+            });
         }
 
         if (holder instanceof ProductOfEachCategoryHolder) {
@@ -105,6 +159,10 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return mProducts.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return mViewType;
+    }
 
     public class HomeProductHolder extends RecyclerView.ViewHolder {
         private HomeProductAdapterItemBinding mBinding;

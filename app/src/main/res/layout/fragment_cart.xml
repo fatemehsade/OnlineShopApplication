@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -13,13 +12,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#604F4F"
+        android:background="@color/surface"
         android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#AA1D1D">
+            android:background="@color/primary_shrine_pink">
 
             <Button
                 android:id="@+id/btn_continue_buying"
@@ -28,8 +27,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
-                android:text="ادامه فرایند خرید"
-                android:textColor="@color/black"
+                android:text="@string/continue_the_buying_process"
+                android:textColor="@color/on_surface"
                 android:textSize="24sp" />
 
             <TextView
@@ -40,7 +39,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:text="@{totalPrice != null ? @string/total + `: ` + totalPrice + ` ` + @string/currency : @string/total + `: ` + @string/ziro + ' ' + @string/currency}"
-                android:textColor="@color/black"
+                android:textColor="@color/on_surface"
                 android:textSize="18sp" />
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -51,4 +50,5 @@
             android:layout_height="match_parent" />
 
     </LinearLayout>
+
 </layout>

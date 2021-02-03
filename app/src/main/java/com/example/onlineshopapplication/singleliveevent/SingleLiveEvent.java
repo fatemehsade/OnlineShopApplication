@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SingleLiveEvent<T> extends MutableLiveData<T> {
     private AtomicBoolean mIsPending = new AtomicBoolean(false);
 
-    private static final String TAG = com.example.onlineshopapplication.singleliveevent.SingleLiveEvent.class.getSimpleName();
+    private static final String TAG = SingleLiveEvent.class.getSimpleName();
 
     @MainThread
     @Override

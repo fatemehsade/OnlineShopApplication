@@ -8,9 +8,9 @@ import androidx.paging.PageKeyedDataSource;
 
 
 import com.example.onlineshopapplication.model.Category;
-import com.example.onlineshopapplication.remote.ApiInterFaceService;
+import com.example.onlineshopapplication.remote.ProductService;
 import com.example.onlineshopapplication.remote.CategoryListDeserializer;
-import com.example.onlineshopapplication.remote.InstansRetrofit;
+import com.example.onlineshopapplication.remote.RetrofitInstance;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
@@ -20,7 +20,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CategoryDataSource extends PageKeyedDataSource<Integer, Category> {
-    private ApiInterFaceService mCategoryService;
+    private ProductService mCategoryService;
     private static final int FIRST_PAGE = 1;
     private MutableLiveData<Integer> mTotalMutableLiveData = new MutableLiveData<>();
     public static final int PER_PAGE = 10;
@@ -28,10 +28,10 @@ public class CategoryDataSource extends PageKeyedDataSource<Integer, Category> {
     private static final String TAG = CategoryDataSource.class.getSimpleName();
 
     {
-        mCategoryService = InstansRetrofit.getRetrofitInstance(
+        mCategoryService = RetrofitInstance.getRetrofitInstance(
                 new TypeToken<List<Category>>() {
                 }.getType(),
-                new CategoryListDeserializer()).create(ApiInterFaceService.class);
+                new CategoryListDeserializer()).create(ProductService.class);
     }
 
     @Override

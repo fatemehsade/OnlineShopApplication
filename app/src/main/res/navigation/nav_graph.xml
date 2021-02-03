@@ -5,22 +5,41 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/navigation_home">
 
-    <fragment
-        android:id="@+id/navigation_home"
-        tools:layout="@layout/fragment_home"
-        android:name="com.example.onlineshopapplication.view.fragment.HomeFragment"
-        android:label="خانه"/>
 
     <fragment
-        android:id="@+id/navigation_cart"
-        tools:layout="@layout/fragment_cart"
-        android:name="com.example.onlineshopapplication.view.fragment.CartFragment"
-        android:label="خرید"/>
+        android:id="@+id/navigation_home"
+        android:name="com.example.onlineshopapplication.view.fragment.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_navigation_home_to_detailFragment"
+            app:destination="@id/detailFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_category"
-        tools:layout="@layout/fragment_category"
         android:name="com.example.onlineshopapplication.view.fragment.CategoryFragment"
-        android:label="دسته بندی"/>
+        android:label="@string/title_category"
+        tools:layout="@layout/fragment_category" />
 
+    <fragment
+        android:id="@+id/navigation_cart"
+        android:name="com.example.onlineshopapplication.view.fragment.CartFragment"
+        android:label="@string/title_cart"
+        tools:layout="@layout/fragment_cart" />
+
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.onlineshopapplication.view.fragment.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail">
+
+        <argument
+            android:name="id"
+            android:defaultValue="0"
+            app:argType="integer" />
+
+    </fragment>
 </navigation>

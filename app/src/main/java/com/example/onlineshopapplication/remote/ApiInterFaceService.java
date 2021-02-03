@@ -33,5 +33,10 @@ public interface ApiInterFaceService {
     Call<List<Product>> getTotalProduct();
 
 
+    @GET("products?consumer key=ck_15465e254b749cb895e00d64387c8b7f96aba938 & " +
+            "consumer secret=cs_80931093385005fa89e3eedbdb96bc6d5f70e7ec")
+    Call<List<Product>> getSpecialProduct(@Query("featured") boolean featured, @Query("per_page") int per_page);
+
+
 
 }

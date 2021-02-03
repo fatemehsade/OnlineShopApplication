@@ -9,12 +9,13 @@ import androidx.lifecycle.LiveData;
 import com.example.onlineshopapplication.model.Product;
 import com.example.onlineshopapplication.repository.ProductRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Home extends AndroidViewModel {
     private ProductRepository mRepository;
     private LiveData<List<Product>> mBestProductLiveData,
-            mLatestProductLiveData, mMostVisitedProductLiveData;
+            mLatestProductLiveData, mMostVisitedProductLiveData,mSpecialProductLiveData;
     private LiveData<Integer> mTotalProductLiveData;
 
     public Home(@NonNull Application application) {
@@ -42,6 +43,11 @@ public class Home extends AndroidViewModel {
         return mMostVisitedProductLiveData;
     }
 
+    public LiveData<List<Product>> getSpecialProductLiveData() {
+        return mSpecialProductLiveData;
+    }
+
+
     public void getBestProduct(String orderby, String order, int per_page) {
         mRepository.getBestProduct(orderby, order, per_page);
     }
@@ -54,7 +60,21 @@ public class Home extends AndroidViewModel {
         mRepository.getMostVisitedProduct(orderby, order, per_page);
     }
 
+    public void getSpecialProduct(boolean featured, int per_page) {
+        mRepository.getSpecialProduct(featured, per_page);
+    }
+
     public void getTotalProduct() {
         mRepository.getTotalProduct();
+    }
+
+    public List<String> getUrl(List<Product> products) {
+        List<String> urls = new ArrayList<>();
+        for (Product product : products) {
+            if (product.getImageUrl().size() != 0) {
+                urls.add(product.getImageUrl().get(0));
+            }
+        }
+        return urls;
     }
 }

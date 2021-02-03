@@ -10,7 +10,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +19,7 @@ import android.view.ViewGroup;
 import com.example.onlineshopapplication.R;
 import com.example.onlineshopapplication.ViewModel.Home;
 import com.example.onlineshopapplication.adapter.ProductAdapter;
+import com.example.onlineshopapplication.adapter.SliderAdapter;
 import com.example.onlineshopapplication.databinding.FragmentHomeBinding;
 import com.example.onlineshopapplication.model.Product;
 
@@ -120,6 +120,14 @@ public class HomeFragment extends Fragment {
                 setupMostVisitedProductAdapter(mostVisitedProducts);
             }
         });
+
+        mHomeViewModel.getSpecialProductLiveData().observe(this, new Observer<List<Product>>() {
+            @Override
+            public void onChanged(List<Product> specialProducts) {
+                mBinding.setSpecialProductTitle("محصولات ویژه");
+                setupSpecialProductAdapter(specialProducts);
+            }
+        });
     }
 
 
@@ -136,6 +144,11 @@ public class HomeFragment extends Fragment {
     private void setupMostVisitedProductAdapter(List<Product> mostVisitedProducts) {
         ProductAdapter mostVisitedProductAdapter = new ProductAdapter(getContext(), mostVisitedProducts);
         mBinding.recyclerViewView.setAdapter(mostVisitedProductAdapter);
+    }
+
+    private void setupSpecialProductAdapter(List<Product> specialProducts) {
+        List<String> urls = mHomeViewModel.getUrl(specialProducts);
+        mBinding.sliderViewSpecialProduct.setSliderAdapter(new SliderAdapter(getContext(), urls));
     }
 
 }

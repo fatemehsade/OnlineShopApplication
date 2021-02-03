@@ -27,6 +27,7 @@ public class ProductRepository {
     private MutableLiveData<List<Product>> mLatestProductMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mMostVisitedProductMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<Integer> mTotalProductMutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<Product>> mSpecialProductMutableLiveData = new MutableLiveData<>();
 
 
     private ProductRepository(Context context) {
@@ -113,6 +114,21 @@ public class ProductRepository {
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
                 mTotalProductMutableLiveData.setValue(Integer.valueOf(
                         response.headers().values("X-WP-Total").get(0)));
+            }
+
+            @Override
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                Log.e("TAG", t.getMessage(), t);
+            }
+        });
+    }
+
+    public void getSpecialProduct(boolean featured, int per_page) {
+        mService
+                .getSpecialProduct(featured, per_page).enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                mSpecialProductMutableLiveData.setValue(response.body());
             }
 
             @Override

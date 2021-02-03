@@ -2,39 +2,71 @@ package com.example.onlineshopapplication.view.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.onlineshopapplication.R;
+import com.example.onlineshopapplication.databinding.FragmentCategoryBinding;
+import com.example.onlineshopapplication.model.Category;
+import com.example.onlineshopapplication.paging.CategoryAdapter;
+import com.example.onlineshopapplication.paging.CategoryViewModel;
 
 
 public class CategoryFragment extends Fragment {
 
-    public CategoryFragment() {
-        // Required empty public constructor
-    }
+    private FragmentCategoryBinding mBinding;
+    private CategoryViewModel mViewModel;
 
     public static CategoryFragment newInstance() {
-        CategoryFragment fragment = new CategoryFragment();
         Bundle args = new Bundle();
-
+        CategoryFragment fragment = new CategoryFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_category, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        mBinding = DataBindingUtil.inflate(
+                inflater,
+                R.layout.fragment_category,
+                container,
+                false);
+
+        initRecyclerView();
+        CategoryAdapter categoryAdapter = new CategoryAdapter(getContext());
+        mViewModel.getPagedListLiveData().observe(getViewLifecycleOwner(), new Observer<PagedList<Category>>() {
+            @Override
+            public void onChanged(PagedList<Category> categories) {
+                categoryAdapter.submitList(categories);
+            }
+        });
+
+        mBinding.recyclerViewCategory.setAdapter(categoryAdapter);
+
+        return mBinding.getRoot();
+    }
+
+    private void initRecyclerView() {
+        mBinding.recyclerViewCategory.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 }

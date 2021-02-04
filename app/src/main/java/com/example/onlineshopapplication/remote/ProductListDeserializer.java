@@ -16,23 +16,23 @@ import java.util.List;
 
 public class ProductListDeserializer implements JsonDeserializer<List<Product>> {
     @Override
-    public List<Product> deserialize(
-            JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
+    public List<Product> deserialize(JsonElement json, Type typeOfT,
+                                     JsonDeserializationContext context) throws JsonParseException {
 
-        List<Product> products=new ArrayList<>();
-        JsonArray bodyArray=json.getAsJsonArray();
-        for (int i = 0; i <bodyArray.size() ; i++) {
-            JsonObject jsonObject=bodyArray.get(i).getAsJsonObject();
-            int id=jsonObject.get("id").getAsInt();
-            String name=jsonObject.get("name").getAsString();
-            String price = jsonObject.get("regular_price").getAsString();
-            int ratingCount=jsonObject.get("rating_count").getAsInt();
+        List<Product> products = new ArrayList<>();
+        JsonArray bodyArray = json.getAsJsonArray();
+        for (int i = 0; i < bodyArray.size(); i++) {
+            JsonObject productObject = bodyArray.get(i).getAsJsonObject();
+
+            int id = productObject.get("id").getAsInt();
+            String name = productObject.get("name").getAsString();
+            String price = productObject.get("regular_price").getAsString();
+            String averageRating = productObject.get("average_rating").getAsString();
             String description = Html.fromHtml(
-                    jsonObject.get("description").getAsString()).toString();
-            String stockStatus = jsonObject.get("stock_status").getAsString();
+                    productObject.get("description").getAsString()).toString();
+            String stockStatus = productObject.get("stock_status").getAsString();
 
-            JsonArray images = jsonObject.get("images").getAsJsonArray();
+            JsonArray images = productObject.get("images").getAsJsonArray();
             List<String> imageUrls = new ArrayList<>();
             for (int j = 0; j < images.size(); j++) {
                 JsonObject imageObject = images.get(j).getAsJsonObject();
@@ -40,10 +40,10 @@ public class ProductListDeserializer implements JsonDeserializer<List<Product>> 
             }
 
             Product product = new Product(
-                    id, name, price, ratingCount, description, stockStatus, imageUrls);
+                    id, name, price, averageRating, description, stockStatus, imageUrls);
             products.add(product);
         }
         return products;
-
-        }
+    }
 }
+

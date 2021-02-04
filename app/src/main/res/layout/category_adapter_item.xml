@@ -5,7 +5,7 @@
 
         <variable
             name="category"
-            type="com.example.onlineshop.model.Category" />
+            type="com.example.onlineshopapplication.model.Category" />
 
     </data>
 

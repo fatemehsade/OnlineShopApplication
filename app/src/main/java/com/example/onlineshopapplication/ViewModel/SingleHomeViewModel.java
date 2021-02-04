@@ -17,12 +17,11 @@ import java.util.List;
 public class SingleHomeViewModel extends AndroidViewModel {
     private ProductRepository mRepository;
     private LiveData<List<Product>> mBestProductLiveData,
-            mLatestProductLiveData, mMostVisitedProductLiveData,mSpecialProductLiveData;
+            mLatestProductLiveData, mMostVisitedProductLiveData, mSpecialProductLiveData;
     private LiveData<Integer> mTotalProductLiveData;
-    private SingleLiveEvent<Boolean> mItemClickedSingleLiveEvent = new SingleLiveEvent<>();
     private MutableLiveData<Integer> mProductIdLiveData = new MutableLiveData<>();
 
-
+    private SingleLiveEvent<Boolean> mItemClickedSingleLiveEvent = new SingleLiveEvent<>();
 
     public SingleHomeViewModel(@NonNull Application application) {
         super(application);
@@ -31,8 +30,10 @@ public class SingleHomeViewModel extends AndroidViewModel {
         mBestProductLiveData = mRepository.getBestProductMutableLiveData();
         mLatestProductLiveData = mRepository.getLatestProductMutableLiveData();
         mMostVisitedProductLiveData = mRepository.getMostVisitedProductMutableLiveData();
-        mTotalProductLiveData=mRepository.getTotalProductMutableLiveData();
+        mTotalProductLiveData = mRepository.getTotalProductMutableLiveData();
+        mSpecialProductLiveData = mRepository.getSpecialProductMutableLiveData();
     }
+
     public LiveData<Integer> getTotalProductLiveData() {
         return mTotalProductLiveData;
     }
@@ -53,30 +54,32 @@ public class SingleHomeViewModel extends AndroidViewModel {
         return mSpecialProductLiveData;
     }
 
+    public SingleLiveEvent<Boolean> getItemClickedSingleLiveEvent() {
+        return mItemClickedSingleLiveEvent;
+    }
+
     public MutableLiveData<Integer> getProductIdLiveData() {
         return mProductIdLiveData;
     }
 
-
-
-    public void getBestProduct(String orderby, String order, int per_page) {
-        mRepository.getBestProduct(orderby, order, per_page);
-    }
-
-    public void getLatestProduct(String orderby, String order, int per_page) {
-        mRepository.getLatestProduct(orderby, order, per_page);
-    }
-
-    public void getMostVisitedProduct(String orderby, String order, int per_page) {
-        mRepository.getMostVisitedProduct(orderby, order, per_page);
-    }
-
-    public void getSpecialProduct(boolean featured, int per_page) {
-        mRepository.getSpecialProduct(featured, per_page);
-    }
-
     public void getTotalProduct() {
         mRepository.getTotalProduct();
+    }
+
+    public void getBestProduct(String orderby, String order) {
+        mRepository.getBestProduct(orderby, order);
+    }
+
+    public void getLatestProduct(String orderby, String order) {
+        mRepository.getLatestProduct(orderby, order);
+    }
+
+    public void getMostVisitedProduct(String orderby, String order) {
+        mRepository.getMostVisitedProduct(orderby, order);
+    }
+
+    public void getSpecialProduct(boolean featured) {
+        mRepository.getSpecialProduct(featured);
     }
 
     public List<String> getUrl(List<Product> products) {
@@ -88,11 +91,4 @@ public class SingleHomeViewModel extends AndroidViewModel {
         }
         return urls;
     }
-
-
-    public SingleLiveEvent<Boolean> getItemClickedSingleLiveEvent() {
-        return mItemClickedSingleLiveEvent;
-    }
-
-
 }

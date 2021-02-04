@@ -12,14 +12,21 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.onlineshopapplication.R;
+import com.example.onlineshopapplication.adapter.AddressAdapter;
 import com.example.onlineshopapplication.databinding.FragmentAddressBinding;
-import com.example.onlineshopapplication.ViewModel.AddressViewModel;
+import com.example.onlineshopapplication.model.Customer;
+import com.example.onlineshopapplication.ViewModel.LocatrViewModel;
+
+import java.util.List;
 
 public class AddressFragment extends Fragment {
     private FragmentAddressBinding mBinding;
-    private AddressViewModel mViewModel;
+    private LocatrViewModel mViewModel;
+    private Customer mCustomer;
 
 
     public static AddressFragment newInstance() {
@@ -34,7 +41,7 @@ public class AddressFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mViewModel = new ViewModelProvider(this).get(AddressViewModel.class);
+        mViewModel = new ViewModelProvider(requireActivity()).get(LocatrViewModel.class);
         setObserver();
     }
 
@@ -48,6 +55,9 @@ public class AddressFragment extends Fragment {
                 R.layout.fragment_address,
                 container,
                 false);
+
+        initRecyclerView();
+
         return mBinding.getRoot();
     }
 
@@ -58,6 +68,8 @@ public class AddressFragment extends Fragment {
         AddressFragmentArgs args = AddressFragmentArgs.fromBundle(getArguments());
         String email = args.getEmail();
         setListener(email);
+        mCustomer = mViewModel.getCustomer(email);
+        setupAdapter(mCustomer.getAddress());
     }
 
 
@@ -66,6 +78,15 @@ public class AddressFragment extends Fragment {
             @Override
             public void onChanged(Integer statusCode) {
                 showReult(statusCode);
+            }
+        });
+
+        mViewModel.getFinalAddressMutableLiveData().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String address) {
+                mCustomer.getAddress().add(address);
+                mViewModel.updateCustomer(mCustomer);
+                setupAdapter(mCustomer.getAddress());
             }
         });
     }
@@ -80,12 +101,28 @@ public class AddressFragment extends Fragment {
         }
     }
 
+    private void setupAdapter(List<String> addresses) {
+        AddressAdapter adapter = new AddressAdapter(getContext(), addresses);
+        mBinding.recyclerViewAddress.setAdapter(adapter);
+    }
+
+    private void initRecyclerView() {
+        mBinding.recyclerViewAddress.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
 
     private void setListener(String email) {
         mBinding.btnFinalRegistrationOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mViewModel.postOrder(email);
+            }
+        });
+
+        mBinding.fabAddLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.locatrFragment);
             }
         });
     }

@@ -1,7 +1,6 @@
 package com.example.onlineshopapplication.ViewModel;
 
 import android.app.Application;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -9,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.onlineshopapplication.model.Product;
+import com.example.onlineshopapplication.model.Review;
 import com.example.onlineshopapplication.repository.ProductRepository;
 import com.example.onlineshopapplication.singleliveevent.SingleLiveEvent;
 
@@ -20,21 +20,22 @@ public class SingleSharedDetailViewModel extends AndroidViewModel {
     private LiveData<Product> mRetrieveProductLiveData;
     private List<Product> mProducts = new ArrayList<>();
     private List<String> mPrices = new ArrayList<>();
-    private MutableLiveData<List<String>> mPriceMutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<String>> mPriceListMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mProductListMutableLiveData = new MutableLiveData<>();
-    private SingleLiveEvent<Boolean> mAddClickedSingleLiveEvent = new SingleLiveEvent<>();
-    private SingleLiveEvent<Boolean> mDeleteClickedSingleLiveEvent = new SingleLiveEvent<>();
-    private SingleLiveEvent<Boolean> mRemoveClickedSingleLiveEvent = new SingleLiveEvent<>();
-    private MutableLiveData<Boolean> mItemClickedMutableLiveData = new MutableLiveData<>();
-    private MutableLiveData<Product> mProductMutableLiveData = new MutableLiveData<>();
+    private SingleLiveEvent<Product> mAddClickedSingleLiveEvent = new SingleLiveEvent<>();
+    private SingleLiveEvent<Product> mDeleteClickedSingleLiveEvent = new SingleLiveEvent<>();
+    private SingleLiveEvent<Product> mRemoveClickedSingleLiveEvent = new SingleLiveEvent<>();
+    private MutableLiveData<Integer> mItemClickedMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<String> mTotalAmountPaidMutableLiveData = new MutableLiveData<>();
     private SingleLiveEvent<Boolean> mOkClickedSingleLiveEvent = new SingleLiveEvent<>();
+    private LiveData<List<Review>> mReviewListLiveData;
 
     public SingleSharedDetailViewModel(@NonNull Application application) {
         super(application);
 
         mRepository = ProductRepository.getInstance(getApplication());
         mRetrieveProductLiveData = mRepository.getProductMutableLiveData();
+        mReviewListLiveData = mRepository.getReviewListMutableLiveData();
     }
 
     public LiveData<Product> getRetrieveProductLiveData() {
@@ -43,10 +44,6 @@ public class SingleSharedDetailViewModel extends AndroidViewModel {
 
     public void retrieveProduct(int id) {
         mRepository.retrieveProduct(id);
-    }
-
-    public void addToCartClicked(View view) {
-        view.setVisibility(View.GONE);
     }
 
     public List<Product> getProducts() {
@@ -61,27 +58,23 @@ public class SingleSharedDetailViewModel extends AndroidViewModel {
         return mProductListMutableLiveData;
     }
 
-    public MutableLiveData<List<String>> getPriceMutableLiveData() {
-        return mPriceMutableLiveData;
+    public MutableLiveData<List<String>> getPriceListMutableLiveData() {
+        return mPriceListMutableLiveData;
     }
 
-    public MutableLiveData<Product> getProductMutableLiveData() {
-        return mProductMutableLiveData;
-    }
-
-    public SingleLiveEvent<Boolean> getAddClickedSingleLiveEvent() {
+    public SingleLiveEvent<Product> getAddClickedSingleLiveEvent() {
         return mAddClickedSingleLiveEvent;
     }
 
-    public SingleLiveEvent<Boolean> getDeleteClickedSingleLiveEvent() {
+    public SingleLiveEvent<Product> getDeleteClickedSingleLiveEvent() {
         return mDeleteClickedSingleLiveEvent;
     }
 
-    public SingleLiveEvent<Boolean> getRemoveClickedSingleLiveEvent() {
+    public SingleLiveEvent<Product> getRemoveClickedSingleLiveEvent() {
         return mRemoveClickedSingleLiveEvent;
     }
 
-    public MutableLiveData<Boolean> getItemClickedMutableLiveData() {
+    public MutableLiveData<Integer> getItemClickedMutableLiveData() {
         return mItemClickedMutableLiveData;
     }
 
@@ -91,5 +84,13 @@ public class SingleSharedDetailViewModel extends AndroidViewModel {
 
     public SingleLiveEvent<Boolean> getOkClickedSingleLiveEvent() {
         return mOkClickedSingleLiveEvent;
+    }
+
+    public LiveData<List<Review>> getReviewListLiveData() {
+        return mReviewListLiveData;
+    }
+
+    public void getReviews(int id) {
+        mRepository.getReviews(id);
     }
 }

@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,8 +24,10 @@ import com.example.onlineshopapplication.adapter.ProductAdapter;
 import com.example.onlineshopapplication.adapter.SliderAdapter;
 import com.example.onlineshopapplication.databinding.FragmentHomeBinding;
 import com.example.onlineshopapplication.model.Product;
+import com.example.onlineshopapplication.utilities.Preferences;
 import com.example.onlineshopapplication.ViewModel.SingleHomeViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
@@ -48,7 +49,10 @@ public class HomeFragment extends Fragment {
         setHasOptionsMenu(true);
 
         mViewModel = new ViewModelProvider(this).get(SingleHomeViewModel.class);
-        mViewModel.getTotalProduct();
+        mViewModel.getBestProduct("rating", "desc");
+        mViewModel.getLatestProduct("date", "desc");
+        mViewModel.getMostVisitedProduct("popularity", "desc");
+        mViewModel.getSpecialProduct(false);
         setObserver();
     }
 
@@ -80,7 +84,13 @@ public class HomeFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.item_search:
+                getActivity().onSearchRequested();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void initToolbar() {
@@ -91,58 +101,45 @@ public class HomeFragment extends Fragment {
     private void initRecyclerView() {
         mBinding.recyclerViewBestProduct.setLayoutManager(
                 new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, true));
-        mBinding.recyclerViewBestProduct.addItemDecoration(new DividerItemDecoration(
-                mBinding.recyclerViewBestProduct.getContext(), DividerItemDecoration.VERTICAL));
         mBinding.recyclerViewLatestProduct.setLayoutManager(
                 new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, true));
         mBinding.recyclerViewMostVisitedProduct.setLayoutManager(
                 new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, true));
-        mBinding.recyclerViewMostVisitedProduct.addItemDecoration(new DividerItemDecoration(
-                mBinding.recyclerViewMostVisitedProduct.getContext(), DividerItemDecoration.VERTICAL));
     }
 
     private void setObserver() {
-        mViewModel.getTotalProductLiveData().observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer totalProduct) {
-                mViewModel.getBestProduct("rating", "desc", totalProduct);
-                mViewModel.getLatestProduct("date", "desc", totalProduct);
-                mViewModel.getMostVisitedProduct("popularity", "desc", totalProduct);
-                mViewModel.getSpecialProduct(false, totalProduct);
-            }
-        });
-
         mViewModel.getBestProductLiveData().observe(this, new Observer<List<Product>>() {
             @Override
-            public void onChanged(List<Product> bestProducts) {
+            public void onChanged(List<Product> products) {
                 mBinding.setBestProductTitle(getString(R.string.best_product_title));
-                setupBestProductAdapter(bestProducts);
+                setupBestProductAdapter(products);
             }
         });
 
         mViewModel.getLatestProductLiveData().observe(this, new Observer<List<Product>>() {
             @Override
-            public void onChanged(List<Product> latestProducts) {
+            public void onChanged(List<Product> products) {
+                Preferences.setLastId(getContext(), products.get(0).getId());
                 mBinding.setLatestProductTitle(getString(R.string.latest_product_title));
-                setupLatestProductAdapter(latestProducts);
+                setupLatestProductAdapter(products);
             }
         });
 
         mViewModel.getMostVisitedProductLiveData().observe(this, new Observer<List<Product>>() {
             @Override
-            public void onChanged(List<Product> mostVisitedProducts) {
+            public void onChanged(List<Product> products) {
                 mBinding.setMostVisitedProductTitle(getString(R.string.most_visited_product_title));
-                setupMostVisitedProductAdapter(mostVisitedProducts);
+                setupMostVisitedProductAdapter(products);
             }
         });
 
         mViewModel.getSpecialProductLiveData().observe(this, new Observer<List<Product>>() {
             @Override
-            public void onChanged(List<Product> specialProducts) {
-                mBinding.setSpecialProductTitle(getString(R.string.special_product_title));
-                setupSpecialProductAdapter(specialProducts);
+            public void onChanged(List<Product> products) {
+                setupSpecialProductAdapter(products);
             }
         });
+
 
         mViewModel.getItemClickedSingleLiveEvent().observe(this, new Observer<Boolean>() {
             @Override
@@ -163,23 +160,29 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void setupBestProductAdapter(List<Product> bestProducts) {
-        ProductAdapter bestProductAdapter = new ProductAdapter(getContext(), mViewModel, 1, bestProducts);
-        mBinding.recyclerViewBestProduct.setAdapter(bestProductAdapter);
+    private void setupBestProductAdapter(List<Product> products) {
+        ProductAdapter adapter = new ProductAdapter(getContext(), mViewModel, 1, products);
+        mBinding.recyclerViewBestProduct.setAdapter(adapter);
     }
 
-    private void setupLatestProductAdapter(List<Product> latestProducts) {
-        ProductAdapter latestProductAdapter = new ProductAdapter(getContext(), mViewModel, 1, latestProducts);
-        mBinding.recyclerViewLatestProduct.setAdapter(latestProductAdapter);
+    private void setupLatestProductAdapter(List<Product> products) {
+        ProductAdapter adapter = new ProductAdapter(getContext(), mViewModel, 1, products);
+        mBinding.recyclerViewLatestProduct.setAdapter(adapter);
     }
 
-    private void setupMostVisitedProductAdapter(List<Product> mostVisitedProducts) {
-        ProductAdapter mostVisitedProductAdapter = new ProductAdapter(getContext(), mViewModel, 1, mostVisitedProducts);
-        mBinding.recyclerViewMostVisitedProduct.setAdapter(mostVisitedProductAdapter);
+    private void setupMostVisitedProductAdapter(List<Product> products) {
+        ProductAdapter adapter = new ProductAdapter(getContext(), mViewModel, 1, products);
+        mBinding.recyclerViewMostVisitedProduct.setAdapter(adapter);
     }
 
-    private void setupSpecialProductAdapter(List<Product> specialProducts) {
-        List<String> urls = mViewModel.getUrl(specialProducts);
-        mBinding.sliderViewSpecialProduct.setSliderAdapter(new SliderAdapter(getContext(), urls));
+    private void setupSpecialProductAdapter(List<Product> products) {
+        List<String> urls = new ArrayList<>();
+        for (Product product : products) {
+            if (product.getImageUrl() != null) {
+                urls.addAll(product.getImageUrl());
+            }
+        }
+        SliderAdapter sliderAdapter = new SliderAdapter(getContext(), urls);
+        mBinding.imgProductSlider.setSliderAdapter(sliderAdapter);
     }
 }

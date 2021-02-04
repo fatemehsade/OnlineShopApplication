@@ -7,13 +7,7 @@
 
         <variable
             name="product"
-            type="com.example.onlineshop.model.Product" />
-
-        <variable
-            name="isSold"
-            type="Boolean" />
-        
-        <import type="android.view.View" />
+            type="com.example.onlineshopapplication.model.Product" />
 
     </data>
 
@@ -29,29 +23,28 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.google.android.material.appbar.AppBarLayout
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/detail_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/secondary_shrine_pink">
+                android:background="@color/secondary_shrine_pink"
+                app:menu="@menu/detail_menu">
 
                 <Button
-                    android:id="@+id/btn_add_to_cart"
+                    android:id="@+id/btn_add_review"
                     style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/add_to_cart"
-                    android:textColor="@color/on_surface"
-                    android:textSize="20sp"
-                    app:icon="@drawable/ic_add_to_cart" />
+                    android:padding="8dp"
+                    android:text="@string/add_review"
+                    app:icon="@drawable/ic_add" />
 
-            </com.google.android.material.appbar.AppBarLayout>
+            </androidx.appcompat.widget.Toolbar>
 
             <com.smarteist.autoimageslider.SliderView
                 android:id="@+id/img_product_slider"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_marginTop="16dp"
                 app:sliderAnimationDuration="1000"
                 app:sliderAutoCycleDirection="back_and_forth"
                 app:sliderAutoCycleEnabled="true"
@@ -68,21 +61,21 @@
                 app:sliderStartAutoCycle="true">
 
                 <ImageView
-                    android:id="@+id/img_product"
                     android:layout_width="wrap_content"
                     android:layout_height="150dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="16dp" />
+                    android:layout_gravity="center"
+                    android:layout_margin="16dp" />
 
             </com.smarteist.autoimageslider.SliderView>
 
             <TextView
+                android:id="@+id/txt_specifications"
                 style="@style/TextAppearance.MaterialComponents.Headline6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
+                android:layout_marginTop="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginBottom="16dp"
                 android:text="@string/specifications"
                 android:textColor="@color/on_surface"
                 android:textSize="20sp" />
@@ -92,41 +85,28 @@
                 style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{product.description}"
+                android:layout_gravity="right"
                 android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginBottom="16dp"
                 android:lineSpacingMultiplier="2"
-                android:maxLines="7"
+                android:text="@{product.description}"
                 android:textColor="@color/on_surface" />
 
-            <RelativeLayout
-                android:id="@+id/show_detail_of_sale"
+            <TextView
                 android:layout_width="wrap_content"
-                android:visibility="@{isSold ? View.VISIBLE : View.GONE, default=gone}"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="16dp"
+                android:text="@string/review_title"
+                android:textSize="16sp" />
 
-                <Button
-                    android:id="@+id/btn_number"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@drawable/custom_button"
-                    android:text="@string/number" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_toLeftOf="@id/btn_number"
-                    android:text="@string/text_sale"
-                    android:textColor="@color/on_surface"
-                    android:textSize="14sp" />
-
-            </RelativeLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_review"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
 
         </LinearLayout>
 

@@ -13,7 +13,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#775757"
+        android:background="@color/surface"
         android:orientation="vertical">
 
         <ImageView
@@ -34,7 +34,7 @@
             android:lineSpacingMultiplier="1.5"
             android:lines="2"
             android:text="@{product.name}"
-            android:textColor="@color/black" />
+            android:textColor="@color/on_surface" />
 
         <TextView
             android:id="@+id/txt_product_price"
@@ -43,7 +43,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
             android:text="@{product.price + ` ` + @string/currency}"
-            android:textColor="@color/black" />
+            android:textColor="@color/on_surface" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -72,7 +72,7 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:text="1" />
+                android:text="@string/number" />
 
             <Button
                 android:id="@+id/btn_add"

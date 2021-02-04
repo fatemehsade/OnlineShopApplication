@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryListDeserializer implements JsonDeserializer<List<Category>> {
-
-
     @Override
     public List<Category> deserialize(
             JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -33,4 +31,3 @@ public class CategoryListDeserializer implements JsonDeserializer<List<Category>
         return categories;
     }
 }
-

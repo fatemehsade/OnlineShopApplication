@@ -1,5 +1,7 @@
 package com.example.onlineshopapplication.view.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -26,7 +28,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(mBinding.navView, navController);
         navController.addOnDestinationChangedListener(this::onDestinationChanged);
-
     }
 
     @Override
@@ -34,10 +35,14 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
                                      @NonNull NavDestination destination,
                                      @Nullable Bundle arguments) {
         if (destination.getId() == R.id.loginFragment || destination.getId() == R.id.signupFragment
-                || destination.getId() == R.id.addressFragment) {
+                || destination.getId() == R.id.addressFragment || destination.getId() == R.id.locatrFragment) {
             mBinding.navView.setVisibility(View.GONE);
         } else {
             mBinding.navView.setVisibility(View.VISIBLE);
         }
+    }
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, MainActivity.class);
     }
 }
